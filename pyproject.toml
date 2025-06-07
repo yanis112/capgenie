@@ -26,6 +26,7 @@ classifiers = [
 ]
 keywords = ["capcut", "video editing", "automation", "json", "ai"]
 dependencies = [
+    "twine>=6.1.0",
     # No external dependencies for now, as per requirements.txt
 ]
 requires-python = ">=3.8"

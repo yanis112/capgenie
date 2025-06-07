@@ -57,3 +57,4 @@ projects/
 #uv
 uv.lock
 .locked
+.vscode/

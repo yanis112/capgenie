@@ -51,7 +51,7 @@ python -m twine upload --repository-url https://upload.pypi.org/legacy/ dist/*
 
 4. Test installation:
 ```bash
-uv pip install --index-url https://test.pypi.org/simple/ free-llm-toolbox
+uv pip install --index-url https://test.pypi.org/simple/ capgenie
 ```
 
 ## Version Updates
