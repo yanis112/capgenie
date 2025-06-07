@@ -10,7 +10,7 @@ __email__ = "yanis.djeroro@gmail.com" # Or your preferred email
 
 # Import main classes/functions for easy access
 from .project_editor import Project
-from .file_manager import CapCutFileManager # Assuming you want to expose this too
+from .file_manager import FileManager as CapCutFileManager # Expose FileManager as CapCutFileManager for backward compatibility
 
 # Define what gets imported with "from capgenie import *"
 __all__ = [

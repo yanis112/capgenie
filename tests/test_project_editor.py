@@ -1,5 +1,10 @@
+import os
+import sys
 
-from capcut_project import Project
+# Add the project root to the Python path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from capgenie.project_editor import Project
 # To create a new project:
 project = Project(
     r'C:\Users\Yanis\AppData\Local\CapCut\User Data\Projects\com.lveditor.draft\test_4',
