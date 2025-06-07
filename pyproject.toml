@@ -1,0 +1,59 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "capgenie"
+version = "0.1.0"
+description = "A Python tool to programmatically edit CapCut project files via JSON manipulation."
+readme = "README.md"
+authors = [
+    {name = "Yanis"} # Your name
+]
+license = {text = "MIT"}
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Multimedia :: Video",
+    "Topic :: Software Development :: Libraries :: Python Modules"
+]
+keywords = ["capcut", "video editing", "automation", "json", "ai"]
+dependencies = [
+    # No external dependencies for now, as per requirements.txt
+]
+requires-python = ">=3.8"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    "black>=23.0",
+    "isort>=5.0",
+    "twine>=3.0", # For publishing
+    "build>=0.10"   # For building
+]
+
+[project.urls]
+Homepage = "https://github.com/YanisDjeroro/CapGenie" # Replace with your actual repo URL
+Repository = "https://github.com/YanisDjeroro/CapGenie" # Replace with your actual repo URL
+# Documentation = "https://capgenie.readthedocs.io" # Placeholder for future docs
+"Bug Reports" = "https://github.com/YanisDjeroro/CapGenie/issues" # Replace with your actual repo URL
+
+# [project.scripts]
+# capgenie-cli = "capgenie.cli:main" # Example if you add a CLI
+
+[tool.hatch.build.targets.wheel]
+packages = ["capgenie"]
+
+[tool.uv]
+dev-dependencies = [
+    "build>=1.2.2.post1",
+    "twine>=6.1.0",
+]
