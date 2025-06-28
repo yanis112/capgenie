@@ -50,8 +50,14 @@ Repository = "https://github.com/YanisDjeroro/CapGenie" # Replace with your actu
 # [project.scripts]
 # capgenie-cli = "capgenie.cli:main" # Example if you add a CLI
 
+[tool.hatch.version]
+scheme = "vcs"
+
 [tool.hatch.build.targets.wheel]
 packages = ["capgenie"]
+
+[tool.hatch.build.hooks.vcs]
+version-file = "capgenie/__about__.py"
 
 [tool.uv]
 dev-dependencies = [
