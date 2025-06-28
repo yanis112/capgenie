@@ -2,13 +2,17 @@
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
+[build-system]
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
+
 [project]
 name = "capgenie"
-version = "0.1.0"
+dynamic = ["version"]
 description = "A Python tool to programmatically edit CapCut project files via JSON manipulation."
 readme = "README.md"
 authors = [
-    {name = "Yanis"} # Your name
+    {name = "Yanis"}
 ]
 license = {text = "MIT"}
 classifiers = [
