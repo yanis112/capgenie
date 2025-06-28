@@ -1,73 +1,68 @@
-# Publishing Instructions
+# Workflow de Publication sur PyPI avec Git
 
-## Prerequisites
-- Python 3.8 or higher
-- `build` and `twine` packages installed
-- Valid PyPI account with API token
+Ce document décrit la procédure à suivre pour publier une nouvelle version du package `capgenie` sur PyPI. Le processus est automatisé grâce à une action GitHub qui se déclenche lors de la création et de la poussée (push) d'un nouveau tag Git.
 
-## Setup
+## Prérequis
 
-1. Install build tools:
-   ```bash
-   pip install --upgrade build twine
-   ```
+- Avoir les droits de push sur le dépôt GitHub.
+- S'assurer que les modifications à publier sont bien présentes sur votre branche principale (ex: `main` ou `master`).
 
-## Building the Package
+## Étapes pour publier une nouvelle version
 
-### On Linux/macOS:
-```bash
-# Clean previous builds
-rm -rf dist/ build/
+Suivez ces étapes dans l'ordre pour garantir une publication réussie.
 
+### 1. Finaliser les modifications du code
 
-# Build the package
-python -m build
-```
+Assurez-vous que tout le code que vous souhaitez inclure dans la nouvelle version est complet, testé et mergé sur votre branche principale.
 
-### On Windows (PowerShell):
-```powershell
-# Clean previous builds
-Remove-Item -Recurse -Force dist, build -ErrorAction SilentlyContinue
+### 2. Mettre les changements en attente et les commiter
 
-# Build the package
-python -m build
-```
-
-## Publishing to PyPI
-
-1. First, create a PyPI API token from https://pypi.org/manage/account/token/
-2. Use `twine` to upload the package:
+Une fois vos modifications prêtes, utilisez les commandes Git habituelles pour les commiter.
 
 ```bash
-# Upload to TestPyPI (for testing)
-twine upload --repository testpypi dist/*
+# 1. Ajoutez tous les fichiers modifiés à la zone de staging
+git add .
 
-# Upload to PyPI (production)
-twine upload dist/*
+# 2. Commitez vos changements avec un message clair et descriptif
+# (ex: "feat: Ajout du support pour X" ou "fix: Correction d'un bug dans Y")
+git commit -m "feat: Description de vos changements"
 ```
 
-When prompted for credentials:
-- Username: `__token__`
-- Password: Your API token (starts with `pypi-`)
+### 3. Créer un nouveau tag Git
 
-## Verifying the Upload
+La version du package est directement liée au tag Git. Il est crucial de suivre le versionnement sémantique (MAJOR.MINOR.PATCH).
 
-After uploading, you can verify your package is available at:
-- TestPyPI: https://test.pypi.org/project/capgenie/
-- PyPI: https://pypi.org/project/capgenie/
+- **MAJOR** (ex: `v1.0.0` -> `v2.0.0`): Pour des changements non rétrocompatibles.
+- **MINOR** (ex: `v1.1.0` -> `v1.2.0`): Pour l'ajout de nouvelles fonctionnalités rétrocompatibles.
+- **PATCH** (ex: `v1.1.1` -> `v1.1.2`): Pour des corrections de bugs rétrocompatibles.
 
-## Installing the Published Package
+Créez le tag avec la commande suivante (le `v` au début est important) :
 
 ```bash
-# From TestPyPI
-pip install --index-url https://test.pypi.org/simple/ --no-deps capgenie
-
-# From PyPI (once published)
-pip install capgenie
+# Exemple pour une nouvelle version mineure
+git tag v0.2.0
 ```
 
-## Troubleshooting
+### 4. Pousser (push) les commits et le tag sur GitHub
 
-- If you get authentication errors, verify your API token is correct
-- Make sure you've incremented the version in `pyproject.toml` before uploading a new version
-- Check PyPI for any rate limiting if you're making multiple uploads in a short time
+Pour déclencher le workflow de publication, vous devez pousser vos commits ainsi que le nouveau tag sur le dépôt distant.
+
+```bash
+# 1. Poussez d'abord vos commits
+git push
+
+# 2. Ensuite, poussez le tag que vous venez de créer
+git push --tags
+```
+
+### 5. Vérifier la publication
+
+Une fois le tag poussé, l'action GitHub va automatiquement démarrer.
+
+1. Allez dans l'onglet **"Actions"** de votre dépôt GitHub pour suivre l'avancement du workflow nommé `Publish Python Package to PyPI`.
+2. Si le workflow se termine avec succès, votre nouvelle version sera disponible sur [PyPI](https://pypi.org/project/capgenie/).
+3. Vous pouvez vérifier que la nouvelle version est en ligne et l'installer avec `pip install capgenie==<votre-nouvelle-version>`.
+
+--- 
+
+En suivant ce processus, vous assurez une gestion de version centralisée et une publication automatisée et fiable de votre package.

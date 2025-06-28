@@ -1,134 +1,229 @@
-# 🧞 CapGenie: Your AI Video Editing Sidekick for CapCut 🎬
+# 🧞 CapGenie: Votre Assistant IA pour le Montage Vidéo sur CapCut
 
-✨ CapGenie is a Python library designed to empower **AI agents** to perform video editing tasks within **CapCut projects**. It facilitates a collaborative workflow where an AI can programmatically modify video projects, and the **user retains full control** to review, refine, and correct these changes directly within the familiar CapCut interface.
+<!-- Badges -->
+<div align="center">
+    <!-- PyPI Version -->
+    <a href="https://pypi.org/project/capgenie/"><img src="https://img.shields.io/pypi/v/capgenie?color=blue&label=PyPI&logo=pypi" alt="PyPI"></a>
+    <!-- GitHub Actions CI/CD Status -->
+    <a href="https://github.com/your-username/capgenie/actions"><img src="https://github.com/your-username/capgenie/actions/workflows/publish.yml/badge.svg" alt="CI/CD Status"></a>
+    <!-- License -->
+    <a href="LICENSE"><img src="https://img.shields.io/pypi/l/capgenie?color=green" alt="License"></a>
+    <!-- Python Versions -->
+    <a href="https://pypi.org/project/capgenie/"><img src="https://img.shields.io/pypi/pyversions/capgenie" alt="Python Versions"></a>
+</div>
 
-The core idea is to leverage AI for automating repetitive or complex editing tasks, while ensuring the user can easily guide and finalize the output. Let the magic begin! 🪄
+<br>
 
-## 🌟 Key Features
+**CapGenie est une bibliothèque Python qui permet aux agents IA d'éditer des projets vidéo CapCut de manière programmatique, tout en vous laissant le contrôle total pour la touche finale.**
 
-*   🤖 **AI-Driven Edits**: Allows AI agents to manipulate CapCut projects by editing a simplified JSON representation of the video timeline.
-*   🧑‍💻 **User Control & Review**: Users can seamlessly review and adjust AI-generated edits using the standard CapCut application. You're always in the director's chair!
-*   🔄 **Smooth Synchronization**: Provides robust two-way synchronization:
-    *   `export_to_json(simplified_json_path)`: Exports the current state of a CapCut project to a user-friendly, AI-editable JSON file.
-    *   `sync_from_json(simplified_json_path)`: Applies changes from a modified simplified JSON file back to the CapCut project.
+## 🤔 Pourquoi CapGenie ?
 
-## 🚀 Workflow: AI Agent & User Collaboration Cycle
+L'idée est simple : déléguer les tâches de montage répétitives ou complexes à une IA, tout en gardant la main sur la direction artistique. CapGenie fait le pont entre la puissance de l'automatisation par le code et l'intuitivité de l'interface de CapCut.
 
-CapGenie enables a powerful and fun iterative workflow:
+## ✨ Fonctionnalités
 
-1.  🎬 **User Initiates/Edits in CapCut**: Start your masterpiece or make initial edits in CapCut.
-2.  📤 **AI Fetches Project State**: The AI agent uses CapGenie's `export_to_json()` to get the current CapCut project timeline as a simplified JSON file.
-3.  🤖 **AI Modifies JSON**: The AI agent programmatically alters this simplified JSON (e.g., adding new video clips, changing timings, adjusting properties).
-4.  📥 **AI Applies Changes**: The AI agent uses CapGenie's `sync_from_json()` to apply the modifications back to the CapCut project.
-5.  👀 **User Reviews in CapCut**: Open the project in CapCut to review the AI's creative work, make any tweaks, or add your final polish.
-6.  🔁 **Repeat & Refine**: This cycle can be repeated as needed, allowing for continuous improvement and collaboration!
+*   🤖 **Édition par l'IA** : Manipulez la timeline de vos projets CapCut via une structure JSON simplifiée.
+*   🧑‍💻 **Contrôle Utilisateur** : Révisez et ajustez les modifications de l'IA directement dans CapCut. Vous restez le réalisateur.
+*   🔄 **Synchronisation Fluide** :
+    *   `export_to_json()`: Extrait l'état d'un projet CapCut vers un fichier JSON simple.
+    *   `sync_from_json()`: Applique les changements du fichier JSON vers le projet CapCut.
+
+## 🚀 Installation
+
+Installez CapGenie en une seule commande :
+
+```bash
+pip install capgenie
+```
+
+## ▶️ Démarrage Rapide
+
+Voici un exemple minimal pour modifier un projet existant.
+
+```python
+import json
+from capgenie import Project
+
+# --- 1. Configuration ---
+# Le chemin vers votre projet CapCut
+capcut_project_path = r'C:\Users\YourUser\AppData\Local\CapCut\User Data\Projects\com.lveditor.draft\YOUR_PROJECT_ID'
+# Le fichier JSON que l'IA va manipuler
+ai_json_path = 'my_video_for_ai.json'
+
+# --- 2. Initialisation ---
+project = Project(project_path=capcut_project_path)
+
+# --- 3. Export pour l'IA ---
+project.export_to_json(ai_json_path)
+print(f"✅ Projet exporté vers {ai_json_path}")
+
+# --- 4. L'IA modifie le JSON (par exemple, ajoute un clip) ---
+with open(ai_json_path, 'r+') as f:
+    data = json.load(f)
+    # Ajoute une nouvelle séquence vidéo à la fin
+    new_clip = {
+      "path": "test_video/new_clip.mp4", # Assurez-vous que le média existe
+      "start_time": data['sequences'][-1]['end_time'] if data.get('sequences') else 0.0,
+      "end_time": (data['sequences'][-1]['end_time'] if data.get('sequences') else 0.0) + 5.0, # Durée de 5s
+      "source_in": 0.0, "source_out": 5.0, "type": "video", "track_index": 0
+    }
+    data.setdefault('sequences', []).append(new_clip)
+    f.seek(0)
+    json.dump(data, f, indent=2)
+    f.truncate()
+print("🤖 L'IA a ajouté un nouveau clip.")
+
+# --- 5. Synchronisation vers CapCut ---
+project.sync_from_json(ai_json_path)
+print("🎉 Synchronisation terminée ! Ouvrez CapCut pour voir le résultat.")
+```
+
+## ⚙️ Configuration
+
+Pour que CapGenie fonctionne, assurez-vous que :
+
+1.  **CapCut est installé** sur votre machine.
+2.  Les **chemins d'accès aux médias** (`path` dans le JSON) sont corrects et accessibles depuis l'environnement où le script est exécuté. Ils peuvent être relatifs ou absolus.
+
+## 🔄 Cycle de Collaboration : Le Workflow
+
+Le processus est un cycle itératif simple et puissant :
 
 ```mermaid
 graph TD
-    A[🎬 User Edits in CapCut] --> B(📤 AI: Exports to JSON);
-    B --> C{🤖 AI Modifies JSON Data};
-    C --> D(📥 AI: Syncs JSON to CapCut);
-    D --> E[👀 User Reviews in CapCut];
+    A[🎬 Utilisateur édite dans CapCut] --> B(📤 L'IA exporte en JSON);
+    B --> C{🤖 L'IA modifie le JSON};
+    C --> D(📥 L'IA synchronise vers CapCut);
+    D --> E[👀 L'utilisateur révise dans CapCut];
     E --> A;
 ```
 
-## 📄 Simplified JSON Structure: The AI's Playground
+## 📚 Référence du Modèle JSON
 
-CapGenie works with a simplified JSON structure representing the video sequences. This file (e.g., `my_project_for_ai.json`) is what the AI agent interacts with. It's designed to be easy to understand and manipulate.
+Le fichier JSON manipulé par l'IA est une représentation simplifiée de la timeline. Voici la documentation complète de tous les paramètres disponibles pour chaque séquence :
 
-Here's a peek:
+### Structure de base
 
 ```json
 {
   "sequences": [
     {
-      "path": "test_video/test_vid_1.mp4",
+      "path": "chemin/vers/votre/media.mp4",
       "start_time": 0.0,
-      "end_time": 4.5,
+      "end_time": 5.0,
       "source_in": 0.0,
-      "source_out": 4.5,
-      // ... other properties like fades, volume ...
+      "source_out": 5.0,
       "type": "video",
-      "track_index": 0
-    },
-    {
-      "path": "test_video/test_vid_2.mp4",
-      "start_time": 4.5,
-      "end_time": 9.0,
-      // ... and so on ...
+      "track_index": 0,
+      "volume": 1.0,
+      "fade_in_duration": 0.5,
+      "fade_out_duration": 0.5
     }
   ]
 }
 ```
-*(**💡 Important Tip**: Ensure video paths in the JSON are correct and accessible by CapCut. These are typically relative to your project's media folder or can be absolute paths.)*
 
-## 🛠️ How to Use with an AI Agent (Example Workflow)
+### Détail des paramètres
 
-Let's see a conceptual Python example of an AI agent using CapGenie:
+#### Paramètres principaux
+- `path` (string, requis) : 
+  - Chemin absolu vers le fichier média (vidéo ou audio). Doit être accessible depuis le système de fichiers.
+  
+- `start_time` (float, requis) :
+  - Position de départ sur la timeline, en secondes.
+  - Exemple : `0.0` pour commencer au début de la vidéo.
 
-```python
-import json
-from capgenie import Project # Make sure Project is correctly importable
+- `end_time` (float, requis) :
+  - Position de fin sur la timeline, en secondes.
+  - La durée de la séquence est calculée comme `end_time - start_time`.
 
-# --- Configuration ---
-# Path to the actual CapCut project directory
-capcut_project_root_path = r'C:\Users\YourUser\AppData\Local\CapCut\User Data\Projects\com.lveditor.draft\YOUR_PROJECT_ID_FOLDER'
+- `source_in` (float, optionnel, défaut: 0.0) :
+  - Point de départ dans le média source, en secondes (découpage temporel).
+  - Permet de ne prendre qu'une partie du média source.
 
-# Path to the simplified JSON file for AI interaction
-ai_editable_json_path = r'projects/my_video_for_ai.json' # Example path
+- `source_out` (float, optionnel) :
+  - Point de fin dans le média source, en secondes (découpage temporel).
+  - Si non spécifié, utilise toute la durée disponible après `source_in`.
 
-# --- 1️⃣ Step 1: Initialize Project Object ---
-project = Project(
-    project_path=capcut_project_root_path,
-    create=False # We're working with an existing project
-)
-print(f"✅ Project object initialized for: {capcut_project_root_path}")
+- `type` (string, requis) :
+  - Type de média : `"video"` ou `"audio"`.
+  - Détermine comment le média est traité dans la timeline.
 
-# --- 2️⃣ Step 2: AI Agent - Get Current State from CapCut ---
-project.export_to_json(ai_editable_json_path)
-print(f"📤 Project state exported to {ai_editable_json_path}")
+- `track_index` (integer, optionnel, défaut: 0) :
+  - Piste sur laquelle placer la séquence.
+  - **Convention recommandée** :
+    - Piste 0 : Vidéo
+    - Piste 1 : Musique de fond
+    - Piste 2 : Voix des personnages
+    - Piste 3 : Voix off/narrateur
 
-# --- 3️⃣ Step 3: AI Agent - Modify the Simplified JSON ---
-# Example: AI adds a new video sequence
-with open(ai_editable_json_path, 'r+') as f:
-    data = json.load(f)
-    new_sequence = {
-      "path": "test_video/new_clip.mp4", # Ensure media exists!
-      "start_time": data['sequences'][-1]['end_time'] if data['sequences'] else 0.0,
-      "end_time": (data['sequences'][-1]['end_time'] if data['sequences'] else 0.0) + 4.0,
-      "source_in": 0.0, "source_out": 4.0,
-      "fade_in_duration": 0.5, "fade_out_duration": 0.5,
-      "volume": 1.0, "type": "video", "track_index": 0
+#### Effets sonores et visuels
+
+- `volume` (float, optionnel, défaut: 1.0) :
+  - Niveau de volume du média, de 0.0 (silence) à 1.0 (volume maximal).
+  - Exemple : `0.7` pour 70% du volume.
+
+- `fade_in_duration` (float, optionnel, défaut: 0.0) :
+  - Durée du fondu d'entrée en secondes.
+  - Pendant cette durée, le média passe progressivement du silence/transparence au volume/niveau d'opacité défini.
+  - Exemple : `0.5` pour un fondu de 500ms.
+
+- `fade_out_duration` (float, optionnel, défaut: 0.0) :
+  - Durée du fondu de sortie en secondes.
+  - Pendant cette durée, le média passe progressivement du volume/niveau d'opacité défini au silence/transparence.
+  - Exemple : `1.0` pour un fondu de 1 seconde.
+
+### Recommandations pour les effets de fondu
+
+#### Durées typiques selon la longueur de la séquence :
+
+- **Séquence courte** (< 10 secondes) :
+  - Vidéo : max 0.5s (pour éviter un effet excessif)
+  - Audio : 0.3–1s selon l'effet souhaité
+
+- **Séquence moyenne** (10–30 secondes) :
+  - Vidéo : 0.5–1s
+  - Audio : 1–3s
+
+- **Séquence longue** (> 30 secondes) :
+  - Vidéo : 1–2s pour un effet plus doux
+  - Audio : 2–5s ou plus pour l'ambiance ou la musique de fond
+
+### Exemple avancé
+
+```json
+{
+  "sequences": [
+    {
+      "path": "C:/Videos/intro.mp4",
+      "start_time": 0.0,
+      "end_time": 10.0,
+      "source_in": 2.0,
+      "source_out": 12.0,
+      "type": "video",
+      "track_index": 0,
+      "fade_in_duration": 1.0,
+      "fade_out_duration": 1.0,
+      "volume": 0.8
+    },
+    {
+      "path": "C:/Musique/background.mp3",
+      "start_time": 0.0,
+      "end_time": 30.0,
+      "type": "audio",
+      "track_index": 1,
+      "fade_in_duration": 3.0,
+      "fade_out_duration": 5.0,
+      "volume": 0.6
     }
-    data['sequences'].append(new_sequence)
-    f.seek(0) # Rewind to overwrite
-    json.dump(data, f, indent=2)
-    f.truncate()
-print(f"🤖 AI agent modified {ai_editable_json_path} and added a new sequence.")
-
-# --- 4️⃣ Step 4: AI Agent - Synchronize Changes back to CapCut ---
-project.sync_from_json(ai_editable_json_path)
-print(f"📥 Changes from {ai_editable_json_path} synchronized back to CapCut project.")
-
-# --- 5️⃣ Step 5: User - Check Changes in CapCut ---
-print("\n🎉 Workflow complete! Please open your project in CapCut to see the AI's magic.")
-
+  ]
+}
 ```
 
-## 📦 Installation
+## 🤝 Contribuer
 
-Get CapGenie up and running with pip:
+Les contributions sont les bienvenues ! N'hésitez pas à ouvrir une issue ou une pull request pour améliorer CapGenie.
 
-```bash
-pip install capgenie
-```
-*(📢 Note: Update with the correct package name if different once published to PyPI.)*
+## 📜 Licence
 
-## 🤝 Contributing
-
-Got ideas to make CapGenie even better? Contributions are welcome! 🤗
-Please feel free to submit issues or pull requests.
-
-## 📜 License
-
-CapGenie is released under the MIT License.
+Ce projet est sous licence MIT.
